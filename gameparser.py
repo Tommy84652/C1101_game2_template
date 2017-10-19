@@ -27,7 +27,13 @@ def filter_words(words, skip_words):
     ['go', 'passage', 'south']
 
     """
-    pass
+    # pass
+    for c in words[:]:
+        for i in skip_words:
+            if c == i:
+                words.remove(c)
+
+    return words
 
     
 def remove_punct(text):
@@ -81,4 +87,5 @@ def normalise_input(user_input):
 
     #
     # COMPLETE ME!
+    return filter_words(no_punct.split(), skip_words)
     #
