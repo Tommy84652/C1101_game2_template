@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
+import os
 from map import rooms
 from player import *
 from items import *
 from gameparser import *
+from giant_word import *
 
 
 
@@ -69,12 +71,18 @@ def print_room_items(room):
 
 
 def inv_total_mass():
+    # This function is going to sum up at the item's mass in the inventory
     total_mass = 0
 
     for item in inventory:
         total_mass += item["mass"]
 
     return total_mass
+
+
+def print_inv_mass():
+    # This function is to print out the total mass of player's inventory.
+    print("Total mass of your inventory is " + str(inv_total_mass()) + " kg" + ".\n")
 
 
 def print_inventory_items(items):
@@ -89,11 +97,9 @@ def print_inventory_items(items):
     """
     # pass
     if items:
-        print("You have " + list_of_items(inventory))
+        print("You have " + list_of_items(inventory) + ".\n")
 
-    print("Total mass of your inventory is " + str(inv_total_mass()) + " kg" + ".\n")
-
-
+    
 def print_room(room):
     """This function takes a room as an input and nicely displays its name
     and description. The room argument is a dictionary with entries "name",
@@ -273,7 +279,7 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-    # pass    
+    # pass   
     take_status = False
     toke_item_mass = ""
 
@@ -382,15 +388,40 @@ def move(exits, direction):
     # Next room to go to
     return rooms[exits[direction]]
 
+def check_game_status():
+    # This function is to check if the play brings all the item back to reseption or not.
+    global game_status
+
+    if len(rooms["Reception"]["items"]) == 6:
+        game_status = False
+
 
 # This is the entry point of our program
 def main():
+    #clear terminal screen
+    os.system("clear")
+
+    # Game introduction
+    start_game_banner()
+
+    print("Welcome to the game2_template!")
+    print("In this game, you need to bring out all the item and drop it down to the Reception.\n")
+
+    print("Rule:")
+    print("1. You can't bring more then 3 kg of mass on you.\n")
+
+    print("Command:")
+    print("1. Type in 'GO' + a 'DIRECTION' to go somewhere.")
+    print("2. Type in 'TAKE' + a 'ITEM' to take some item on the floor.")
+    print("3. Type in 'DROP' + a 'ITEM' to drop some item to the floor.")
+    print("-------------------------------------------------------------")
 
     # Main game loop
-    while True:
+    while True and game_status is True:
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
+        print_inv_mass()
 
         # Show the menu with possible actions and ask the player
         command = menu(current_room["exits"], current_room["items"], inventory)
@@ -398,6 +429,12 @@ def main():
         # Execute the player's command
         execute_command(command)
 
+        # Check the game status
+        check_game_status()
+
+    # End of the game
+    os.system("clear")
+    end_game_banner()
 
 
 # Are we being run as a script? If so, run main().
