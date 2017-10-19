@@ -68,6 +68,15 @@ def print_room_items(room):
         print("There is " + list_of_items(room["items"]) + " here." + "\n")
 
 
+def inv_total_mass():
+    total_mass = 0
+
+    for item in inventory:
+        total_mass += item["mass"]
+
+    return total_mass
+
+
 def print_inventory_items(items):
     """This function takes a list of inventory items and displays it nicely, in a
     manner similar to print_room_items(). The only difference is in formatting:
@@ -80,7 +89,9 @@ def print_inventory_items(items):
     """
     # pass
     if items:
-        print("You have " + list_of_items(inventory) + ".\n")
+        print("You have " + list_of_items(inventory))
+
+    print("Total mass of your inventory is " + str(inv_total_mass()) + " kg" + ".\n")
 
 
 def print_room(room):
@@ -264,16 +275,22 @@ def execute_take(item_id):
     """
     # pass    
     take_status = False
+    toke_item_mass = ""
 
     for i in range(len(current_room["items"])):
         if item_id in current_room["items"][i]["id"]:
-            inventory.append(current_room["items"][i])
-            current_room["items"].remove(current_room["items"][i])
-            take_status = True
-            break
+            toke_item_mass = current_room["items"][i]["mass"]
+            if inv_total_mass() + toke_item_mass > 3:
+                print("It's more then 3 kg!")
+                break
+            else:
+                inventory.append(current_room["items"][i])
+                current_room["items"].remove(current_room["items"][i])
+                take_status = True
+                break
 
     if not take_status:
-        print("You cannot take that.")
+        print("You cannot take this item.")
 
 
 def execute_drop(item_id):
